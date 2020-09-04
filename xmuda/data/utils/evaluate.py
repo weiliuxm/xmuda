@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.metrics import confusion_matrix as CM
 
+
 class Evaluator(object):
     def __init__(self, class_names, labels=None):
         self.class_names = tuple(class_names)
@@ -34,6 +35,7 @@ class Evaluator(object):
     def overall_acc(self):
         return np.sum(np.diag(self.confusion_matrix)) / np.sum(self.confusion_matrix)
 
+
     @property
     def overall_iou(self):
         class_iou = np.array(self.class_iou.copy())
@@ -44,6 +46,13 @@ class Evaluator(object):
     def class_seg_acc(self):
         return [self.confusion_matrix[i, i] / np.sum(self.confusion_matrix[i])
                 for i in range(self.num_classes)]
+
+    @property
+    def average_precision(self):
+        precisions = np.random.rand(self.num_classes)
+        for i in range(self.num_classes):
+            precisions[i] = self.confusion_matrix[i, i] / np.sum(self.confusion_matrix)
+        return np.mean(precisions)
 
     @property
     def class_iou(self):
